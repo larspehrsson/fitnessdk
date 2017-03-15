@@ -1,0 +1,17 @@
+﻿<Window x:Class="FitnessDK.Holdstat"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FitnessDK"
+        xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        mc:Ignorable="d"
+        Title="Holdstat" Height="600" Width="800">
+    <Grid>
+        <wpf:CartesianChart Series="{Binding seriesCollection}" >
+            <wpf:CartesianChart.AxisX>
+                <wpf:Axis LabelFormatter="{Binding XFormatter}" Separator="{x:Static wpf:DefaultAxes.CleanSeparator}" />
+            </wpf:CartesianChart.AxisX>
+        </wpf:CartesianChart>
+    </Grid>
+</Window>
