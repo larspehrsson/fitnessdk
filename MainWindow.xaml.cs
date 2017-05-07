@@ -229,14 +229,12 @@ namespace FitnessDK
                 CustomViewModel.HoldPåDag(dato) > 0 &&
                 !forceupdate)
             {
-                if (dato.Date == new DateTime(2017, 05, 20))
-                    Console.WriteLine("er");
                 CustomViewModel.SetStat(dato, "Springes over");
                 return;
             }
 
-            if (_valgtdato != DateTime.MinValue && _valgtdato < DateTime.Today && CustomViewModel.HoldPåDag(dato) > 1 
-                &&              !forceupdate)
+            if (_valgtdato != DateTime.MinValue && _valgtdato < DateTime.Today && CustomViewModel.HoldPåDag(dato) > 1
+                && !forceupdate)
             {
                 CustomViewModel.SetStat(dato, "Springes over");
                 return;
