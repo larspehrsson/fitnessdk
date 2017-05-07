@@ -40,9 +40,9 @@ namespace FitnessDK
             var dbname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Fitnessdk");
             if (!Directory.Exists(dbname))
                 Directory.CreateDirectory(dbname);
-            dbname = Path.Combine(dbname, "fitnessdata2d.db");
-            if (!File.Exists(dbname))
-                File.Copy(@"FitnessData.db", dbname);
+            dbname = Path.Combine(dbname, "fitnessdata.db");
+            //if (!File.Exists(dbname))
+            //    File.Copy(@"FitnessData.db", dbname);
             //dbname = "fitnessdata.db"; //TODO
             _db = new LiteDatabase(dbname);
             //_db.Shrink();
@@ -142,7 +142,7 @@ namespace FitnessDK
         {
             lock (dbLock)
             {
-                var ant = _totalHoldList.Count(c => c.tidspunkt >= dato && c.tidspunkt <= dato.AddDays(1));
+                var ant = _totalHoldList.Count(c => c.tidspunkt >= dato.Date && c.tidspunkt <= dato.Date.AddDays(1));
                 return ant;
             }
 
@@ -347,39 +347,36 @@ namespace FitnessDK
 
         public void FindEvents()
         {
-            //foreach (var hold in _holddataCollection.FindAll().Where(c => c.isevent && c.isevent && c.tidspunkt >= DateTime.Today))
-            //{
-            //    hold.isevent = false;
-            //    _holddataCollection.Update(hold);
-            //}
+            foreach (var hold in _holddataCollection.FindAll().Where(c => c.isevent && c.isevent && c.tidspunkt >= DateTime.Today))
+            {
+                hold.isevent = false;
+                _holddataCollection.Update(hold);
+            }
 
-            //var list =
-            //    _holddataCollection.FindAll()
-            //    .Where(c => c.tidspunkt >= DateTime.Today)
-            //        .GroupBy(c => new { c.holdnavn, c.center, c.ugedag })
-            //        .Where(grp => grp.Count() <= 1)
-            //        .SelectMany(c => c);
-
-            //foreach (var hold in list)
-            //{
-            //    if (!hold.isevent)
-            //    {
-            //        hold.isevent = true;
-            //        _holddataCollection.Update(hold);
-            //    }
-            //}
-
-            var list =
+            var list2 =
                 _holddataCollection.FindAll()
-                    .Where(c => c.holdnavn.ToLower().Contains("event") || c.holdnavn.ToLower().Contains("release")).Where(c => c.isevent == false);
+                .Where(c => c.tidspunkt >= DateTime.Today)
+                    .GroupBy(c => new { c.holdnavn, c.center, c.tidspunkt.DayOfWeek })
+                    .Where(grp => grp.Count() <= 1)
+                    .SelectMany(c => c).ToList();
 
-            foreach (var hold in list)
+            foreach (var hold in list2)
             {
                 if (!hold.isevent)
                 {
                     hold.isevent = true;
                     _holddataCollection.Update(hold);
                 }
+            }
+
+            var list =
+                _holddataCollection.FindAll()
+                    .Where(c => c.holdnavn.ToLower().Contains("event") || c.holdnavn.ToLower().Contains("release")).Where(c => c.isevent == false).ToList();
+
+            foreach (var hold in list)
+            {
+                hold.isevent = true;
+                _holddataCollection.Update(hold);
             }
 
             //foreach (var hold in _holddataCollection.FindAll().ToList().Where(c => c.tidspunkt >= DateTime.Today).OrderBy(c => c.tidspunkt))
@@ -434,7 +431,7 @@ namespace FitnessDK
             worksheet.Cells[rowNumber, j++].Value = "niveau";
             worksheet.Cells[rowNumber, j++].Value = "event";
 
-            foreach (var Hold in TotalHoldList.Where(c => c.tidspunkt >= DateTime.Today).OrderBy(c => c.tidspunkt))
+            foreach (var Hold in TotalHoldList.OrderBy(c => c.tidspunkt))
             {
                 rowNumber++;
                 j = 1;
@@ -451,7 +448,7 @@ namespace FitnessDK
             worksheet.Column(2).Style.Numberformat.Format = "yyyy-mm-dd HH:MM";
 
             //var range2 = worksheet.Cells["A:C"];
-            var range2 = worksheet.Cells[1, 1, rowNumber, j-1];  // [FromRow, FromCol, ToRow, ToCol] l
+            var range2 = worksheet.Cells[1, 1, rowNumber, j - 1];  // [FromRow, FromCol, ToRow, ToCol] l
 
             range2.AutoFitColumns();
 
