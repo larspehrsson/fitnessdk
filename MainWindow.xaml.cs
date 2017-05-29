@@ -200,8 +200,8 @@ namespace FitnessDK
             {
                 startDate = _valgtdato.Value;
                 slutDate = startDate;
-                //if (startDate < DateTime.Today)
-                //    slutDate = DateTime.Today; //  startDate.AddDays(35); //TODO
+                if (forceupdate && startDate < DateTime.Today)
+                    slutDate = DateTime.Today; //  startDate.AddDays(35); //TODO
             }
             else
             {
