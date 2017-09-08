@@ -17,7 +17,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>C:\Dropbox\Visual Studio\FitnessDK\publish\</PublishUrl>
+    <PublishUrl>C:\Users\dsr-lpe\Dropbox\Public\fitnessdk\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -27,14 +27,13 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>https://raw.github.com/larspehrsson/fitnessdk/master/publish/</InstallUrl>
+    <InstallUrl>https://raw.githubusercontent.com/larspehrsson/fitnessdk/master/publish/</InstallUrl>
     <TargetCulture>da</TargetCulture>
     <PublisherName>Lars Pehrsson</PublisherName>
     <SuiteName>Fitness dk holdoversigt</SuiteName>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>48</ApplicationRevision>
+    <ApplicationRevision>54</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -78,21 +77,24 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="LiteDB, Version=3.1.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
-      <HintPath>packages\LiteDB.3.1.0\lib\net35\LiteDB.dll</HintPath>
+    <Reference Include="LiteDB, Version=3.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>packages\LiteDB.3.1.4\lib\net35\LiteDB.dll</HintPath>
     </Reference>
-    <Reference Include="LiveCharts, Version=0.9.5.0, Culture=neutral, PublicKeyToken=c5935629d38af058, processorArchitecture=MSIL">
-      <HintPath>packages\LiveCharts.0.9.5\lib\net45\LiveCharts.dll</HintPath>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
     </Reference>
-    <Reference Include="LiveCharts.Wpf, Version=0.9.5.0, Culture=neutral, PublicKeyToken=3b585c2a5f1a92c1, processorArchitecture=MSIL">
-      <HintPath>packages\LiveCharts.Wpf.0.9.5\lib\net45\LiveCharts.Wpf.dll</HintPath>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -196,9 +198,9 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FodyWeavers.xml">
+    <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
-    </Resource>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -253,16 +255,6 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
-    <PublishFile Include="Newtonsoft.Json">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -305,13 +297,15 @@ foreach (var item in filesToCleanup)
   <Target Name="CleanReferenceCopyLocalPaths" AfterTargets="AfterBuild;NonWinFodyTarget" Condition=" '$(Configuration)' == 'Release' ">
     <CosturaCleanup Config="FodyWeavers.xml" Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
   </Target>
-  <Import Project="packages\Fody.1.29.4\build\dotnet\Fody.targets" Condition="Exists('packages\Fody.1.29.4\build\dotnet\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\Fody.1.29.4\build\dotnet\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.1.29.4\build\dotnet\Fody.targets'))" />
+    <Error Condition="!Exists('packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets'))" />
+    <Error Condition="!Exists('packages\Fody.2.1.2\build\netstandard1.0\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.2.1.2\build\netstandard1.0\Fody.targets'))" />
   </Target>
+  <Import Project="packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
+  <Import Project="packages\Fody.2.1.2\build\netstandard1.0\Fody.targets" Condition="Exists('packages\Fody.2.1.2\build\netstandard1.0\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -107,7 +107,7 @@ namespace FitnessDK
                 .Range(0, (slutDate - startDate).Days + 1) // check the rounding
                 .Select(i => startDate.Date.AddDays(i)).ToList();
 
-            Parallel.ForEach(days, new ParallelOptions {MaxDegreeOfParallelism = 5}, day => OpdaterData(day));
+            Parallel.ForEach(days, new ParallelOptions { MaxDegreeOfParallelism = 5 }, day => OpdaterData(day));
 
             CustomViewModel.FindEvents();
         }
@@ -175,7 +175,7 @@ namespace FitnessDK
 
         private void HoldLB_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var hold = (FavoritHold) holdLB.SelectedItem;
+            var hold = (FavoritHold)holdLB.SelectedItem;
             if (hold == null) return;
 
             hold.fravalgt = !hold.fravalgt;
@@ -270,8 +270,7 @@ namespace FitnessDK
 
             var xDocument = XDocument.Parse(xmlstr);
 
-            var items2 = (from g in xDocument.Root.Elements("ul").Elements("li").Elements("ul").Elements("li")
-                select g).ToList();
+            var items2 = (from g in xDocument.Root.Elements("ul").Elements("li").Elements("ul").Elements("li") select g).ToList();
 
             var HoldList = new List<Hold>();
             foreach (var element in items2)
@@ -366,11 +365,11 @@ namespace FitnessDK
 
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var src = VisualTreeHelper.GetParent((DependencyObject) e.OriginalSource);
+            var src = VisualTreeHelper.GetParent((DependencyObject)e.OriginalSource);
             var srcType = src.GetType();
             if (srcType == typeof(ListViewItem) || srcType == typeof(GridViewRowPresenter))
             {
-                var hold = (Hold) dataGrid.SelectedItem;
+                var hold = (Hold)dataGrid.SelectedItem;
                 if (hold != null)
                     Process.Start(hold.tilmeldurl);
             }

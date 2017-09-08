@@ -249,7 +249,7 @@ namespace FitnessDK
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return "error";
             }
