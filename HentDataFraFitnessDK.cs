@@ -275,6 +275,8 @@ namespace FitnessDK
                 }
             }
             var i = responseContent.IndexOf("Please select center wherein you want see class.");
+            if (i == -1)
+                i = responseContent.IndexOf("Vælg et center for at søge efter hold");
             if (i > 0)
                 i = responseContent.IndexOf("name=\"form_build_id\"", i);
             if (i > 0)

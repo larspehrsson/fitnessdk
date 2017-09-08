@@ -7,10 +7,10 @@
 //Højreklik på classeliste for at markere som uønsket
 // https://raw.github.com/larspehrsson/fitnessdk/master/publish/setup.exe
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,20 +20,24 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
+using Newtonsoft.Json;
+using Control = System.Windows.Forms.Control;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using ListViewItem = System.Windows.Controls.ListViewItem;
 
 namespace FitnessDK
 {
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
-    /// </summary>filg
+    /// </summary>
+    /// filg
     public partial class MainWindow : Window
     {
-        public CustomerViewModel CustomViewModel = new CustomerViewModel();
         private static DateTime? _valgtdato;
         private static string head = "";
         private readonly BackgroundWorker backgroundWorker1;
-        private bool forceupdate = false;
+        public CustomerViewModel CustomViewModel = new CustomerViewModel();
+        private bool forceupdate;
 
         private DateTime slutDate;
 
@@ -42,7 +46,7 @@ namespace FitnessDK
 
         private DateTime startDate;
 
-        private bool TempDisableCenterSelection = false;
+        private bool TempDisableCenterSelection;
 
         public MainWindow()
         {
@@ -103,7 +107,7 @@ namespace FitnessDK
                 .Range(0, (slutDate - startDate).Days + 1) // check the rounding
                 .Select(i => startDate.Date.AddDays(i)).ToList();
 
-            Parallel.ForEach(days, new ParallelOptions { MaxDegreeOfParallelism = 5 }, day => OpdaterData(day));
+            Parallel.ForEach(days, new ParallelOptions {MaxDegreeOfParallelism = 5}, day => OpdaterData(day));
 
             CustomViewModel.FindEvents();
         }
@@ -157,14 +161,10 @@ namespace FitnessDK
         private void gemFavoritter_Click(object sender, RoutedEventArgs e)
         {
             if (centerLB.SelectedItems.Count > 0)
-            {
                 CustomViewModel.SætFavoritCenter(
                     (from object centernavn in centerLB.SelectedItems select centernavn.ToString()).ToList());
-            }
             else
-            {
                 VælgFavoritCentre();
-            }
         }
 
         private void HoldDG_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -175,7 +175,7 @@ namespace FitnessDK
 
         private void HoldLB_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var hold = (FavoritHold)holdLB.SelectedItem;
+            var hold = (FavoritHold) holdLB.SelectedItem;
             if (hold == null) return;
 
             hold.fravalgt = !hold.fravalgt;
@@ -189,10 +189,11 @@ namespace FitnessDK
             //thread.Abort();
             //splashWindow.Close();
         }
+
         private void OpdaterButtonClick(object sender, RoutedEventArgs e)
         {
             OpdaterButton.IsEnabled = false;
-            forceupdate = System.Windows.Forms.Control.ModifierKeys == Keys.Shift;
+            forceupdate = Control.ModifierKeys == Keys.Shift;
 
             CustomViewModel.ClearHoldChangesCollection();
 
@@ -253,13 +254,11 @@ namespace FitnessDK
             using (var reader = new JsonTextReader(new StringReader(responseContent)))
             {
                 while (reader.Read())
-                {
                     if (reader.Value?.ToString().Length > 1000)
                     {
                         var xmlstr = reader.Value.ToString();
                         ParseXML(xmlstr, dato.Date);
                     }
-                }
             }
             CustomViewModel.SetStat(dato, "Opdateret");
         }
@@ -272,7 +271,7 @@ namespace FitnessDK
             var xDocument = XDocument.Parse(xmlstr);
 
             var items2 = (from g in xDocument.Root.Elements("ul").Elements("li").Elements("ul").Elements("li")
-                          select g).ToList();
+                select g).ToList();
 
             var HoldList = new List<Hold>();
             foreach (var element in items2)
@@ -318,10 +317,7 @@ namespace FitnessDK
         private void startAsyncButton_Click(object sender, EventArgs e)
         {
             if (backgroundWorker1.IsBusy != true)
-            {
-                // Start the asynchronous operation.
                 backgroundWorker1.RunWorkerAsync();
-            }
         }
 
         private void StatButton_OnClick(object sender, RoutedEventArgs e)
@@ -354,9 +350,7 @@ namespace FitnessDK
         {
             TempDisableCenterSelection = true;
             foreach (var center in CustomViewModel.HentFavoritCenter())
-            {
                 centerLB.SelectedItems.Add(center);
-            }
             TempDisableCenterSelection = false;
             CenterLB_OnSelectionChanged(null, null);
         }
@@ -364,23 +358,21 @@ namespace FitnessDK
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             CustomViewModel.Eksport();
-
         }
 
         private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
         }
 
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var src = VisualTreeHelper.GetParent((DependencyObject)e.OriginalSource);
+            var src = VisualTreeHelper.GetParent((DependencyObject) e.OriginalSource);
             var srcType = src.GetType();
-            if (srcType == typeof(System.Windows.Controls.ListViewItem) || srcType == typeof(GridViewRowPresenter))
+            if (srcType == typeof(ListViewItem) || srcType == typeof(GridViewRowPresenter))
             {
-                var hold = (Hold)dataGrid.SelectedItem;
+                var hold = (Hold) dataGrid.SelectedItem;
                 if (hold != null)
-                    System.Diagnostics.Process.Start(hold.tilmeldurl);
+                    Process.Start(hold.tilmeldurl);
             }
         }
     }
